@@ -1,10 +1,10 @@
-# 🚀 Système Fog Computing avec Scheduler Intelligent
+#  Système Fog Computing avec Scheduler Intelligent
 
-## 📋 Description du Projet
+##  Description du Projet
 
 Ce projet implémente un **système de calcul Fog Computing avancé** avec un **scheduler intelligent adaptatif**. Le système déploie une architecture décentralisée qui rapproche le traitement des données des sources IoT, réduisant significativement la latence et optimisant l'utilisation de la bande passante.
 
-### 🎯 Objectif Pédagogique
+###  Objectif Pédagogique
 
 Développer un scheduler intelligent qui dépasse les méthodes classiques (Round Robin, FIFO) en prenant en compte des critères adaptatifs tels que :
 - La charge actuelle des nœuds
@@ -13,20 +13,20 @@ Développer un scheduler intelligent qui dépasse les méthodes classiques (Roun
 - La latence réseau estimée
 - La consommation énergétique
 
-### 🏆 Fonctionnalités Clés
+###  Fonctionnalités Clés
 
-- ✅ **Architecture Multi-nœuds** : 3 nœuds Fog déployés via Docker
-- ✅ **Scheduler Intelligent** : Algorithme de scoring multi-critères (7 facteurs)
-- ✅ **Gestion Avancée des Ressources** : CPU, RAM, Stockage, Énergie
-- ✅ **Optimisation Énergétique** : Protection des tâches critiques en cas de batterie faible
-- ✅ **Gestion de Charge Adaptative** : Rejet intelligent basé sur la disponibilité
-- ✅ **API REST Complète** : Soumission, monitoring et métriques temps réel
-- ✅ **Observabilité Complète** : Logs détaillés et métriques de performance
-- ✅ **Tests Exhaustifs** : Suite de tests automatisés avec benchmarking
+-  **Architecture Multi-nœuds** : 3 nœuds Fog déployés via Docker
+-  **Scheduler Intelligent** : Algorithme de scoring multi-critères (7 facteurs)
+-  **Gestion Avancée des Ressources** : CPU, RAM, Stockage, Énergie
+-  **Optimisation Énergétique** : Protection des tâches critiques en cas de batterie faible
+-  **Gestion de Charge Adaptative** : Rejet intelligent basé sur la disponibilité
+-  **API REST Complète** : Soumission, monitoring et métriques temps réel
+-  **Observabilité Complète** : Logs détaillés et métriques de performance
+-  **Tests Exhaustifs** : Suite de tests automatisés avec benchmarking
 
 ---
 
-## 🏗️ Architecture Système
+##  Architecture Système
 
 ### Vue d'ensemble
 
@@ -74,7 +74,7 @@ Développer un scheduler intelligent qui dépasse les méthodes classiques (Roun
 
 ---
 
-## 📊 Algorithme du Scheduler
+##  Algorithme du Scheduler
 
 ### Principe de Fonctionnement
 
@@ -127,10 +127,10 @@ func (t *Task) calculateScore() float64 {
 
 | Tâche | Priorité | Criticité | CPU | RAM | Énergie | Score | Priorité |
 |-------|----------|-----------|-----|-----|---------|-------|----------|
-| Alerte Sécurité | 0 | 5 | 0.4 | 0.3 | 0.2 | **0 + 0 + 8 + 9 + 0 + 8 + 10 = 35** | 🔴 Très Haute |
-| Analytics Temps Réel | 1 | 4 | 0.8 | 0.6 | 0.4 | **100 + 50 + 16 + 18 + 0 + 16 + 10 = 210** | 🟠 Haute |
-| Préprocessing | 2 | 2 | 0.2 | 0.1 | 0.1 | **200 + 150 + 4 + 3 + 0 + 4 + 10 = 371** | 🟡 Moyenne |
-| Mise en Cache | 3 | 1 | 0.1 | 0.05 | 0.05 | **300 + 200 + 2 + 1.5 + 0 + 2 + 10 = 515.5** | 🟢 Basse |
+| Alerte Sécurité | 0 | 5 | 0.4 | 0.3 | 0.2 | **0 + 0 + 8 + 9 + 0 + 8 + 10 = 35** | Très Haute |
+| Analytics Temps Réel | 1 | 4 | 0.8 | 0.6 | 0.4 | **100 + 50 + 16 + 18 + 0 + 16 + 10 = 210** |  Haute |
+| Préprocessing | 2 | 2 | 0.2 | 0.1 | 0.1 | **200 + 150 + 4 + 3 + 0 + 4 + 10 = 371** | Moyenne |
+| Mise en Cache | 3 | 1 | 0.1 | 0.05 | 0.05 | **300 + 200 + 2 + 1.5 + 0 + 2 + 10 = 515.5** |  Basse |
 
 ### Gestion des Ressources
 
@@ -207,7 +207,7 @@ curl http://localhost:8080/health
 
 ---
 
-## 🔧 Utilisation de l'API
+## Utilisation de l'API
 
 ### Endpoints Disponibles
 
@@ -403,12 +403,12 @@ curl http://localhost:8081/metrics
 
 | Critère | Round Robin | FIFO | **Scheduler Intelligent** |
 |---------|-------------|------|---------------------------|
-| **Priorisation** | ❌ Non | ❌ Non | ✅ Oui (0-3) |
-| **Criticité** | ❌ Non | ❌ Non | ✅ Oui (1-5) |
-| **Charge** | ⚠️ Partiel | ⚠️ Partiel | ✅ Adaptatif |
-| **Latence** | ❌ Non | ❌ Non | ✅ Estimée |
-| **Rejet** | ❌ Non | ❌ Non | ✅ Intelligent |
-| **QoS** | 🟡 Moyen | 🟡 Moyen | 🟢 Élevé |
+| **Priorisation** |  Non |  Non |  Oui (0-3) |
+| **Criticité** |  Non |  Non |  Oui (1-5) |
+| **Charge** |  Partiel | Partiel |  Adaptatif |
+| **Latence** |  Non |  Non |  Estimée |
+| **Rejet** |  Non |  Non |  Intelligent |
+| **QoS** | Moyen |  Moyen |  Élevé |
 
 ### Performance Mesurée
 
@@ -452,24 +452,24 @@ done
 
 ---
 
-## 🏆 Conclusion
+## Conclusion
 
 Ce projet démontre une implémentation complète et robuste d'un système Fog Computing avec scheduler intelligent. Les résultats obtenus dépassent largement les attentes :
 
-### ✅ Points Forts
+###  Points Forts
 - **Performance** : Débit de 850+ tâches/seconde
 - **Fiabilité** : Architecture décentralisée et résiliente
 - **Adaptabilité** : Scheduler qui s'adapte aux conditions réseau
 - **Observabilité** : Métriques et logs complets
 - **Maintenabilité** : Code propre et bien testé
 
-### 🚀 Perspectives d'Amélioration
+###  Perspectives d'Amélioration
 - **Machine Learning** : Prédiction de charge basée sur l'historique
 - **Orchestration** : Kubernetes pour scaling automatique
 - **Sécurité** : Authentification et chiffrement
 - **Monitoring Avancé** : Grafana + Prometheus
 
-### 📚 Technologies Utilisées
+###  Technologies Utilisées
 - **Backend** : Go (goroutines, channels, heap)
 - **Conteneurisation** : Docker + Docker Compose
 - **API** : RESTful avec Gorilla Mux
@@ -478,7 +478,7 @@ Ce projet démontre une implémentation complète et robuste d'un système Fog C
 
 ---
 
-## 👥 Équipe et Remerciements
+##  Équipe et Remerciements
 
 **Développeur** : [Votre Nom]
 
