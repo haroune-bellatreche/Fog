@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  fog-node-1:
+    build: .
+    container_name: fog-node-1
+    environment:
+      - NODE_ID=fog-node-1
+      - LOCATION=edge-site-1
+      - PORT=8080
+    ports:
+      - "8081:8080"
+    networks:
+      - fog-network
+    restart: unless-stopped
+
+  fog-node-2:
+    build: .
+    container_name: fog-node-2
+    environment:
+      - NODE_ID=fog-node-2
+      - LOCATION=edge-site-2
+      - PORT=8080
+    ports:
+      - "8082:8080"
+    networks:
+      - fog-network
+    restart: unless-stopped
+
+  fog-node-3:
+    build: .
+    container_name: fog-node-3
+    environment:
+      - NODE_ID=fog-node-3
+      - LOCATION=edge-site-3
+      - PORT=8080
+    ports:
+      - "8083:8080"
+    networks:
+      - fog-network
+    restart: unless-stopped
+
+networks:
+  fog-network:
+    driver: bridge
