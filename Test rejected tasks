@@ -1,0 +1,190 @@
+#!/usr/bin/env python3
+"""
+Script de test pour la fonctionnalité de queue des tâches rejetées
+(Version finale – calcul du score et affichage lisible)
+"""
+
+import requests
+import time
+from typing import Dict
+
+BASE_URL = "http://localhost:8080"
+
+# Valeurs par défaut pour calcul du score
+TYPE_CPU = {
+    "data_aggregation": 0.2,
+    "edge_analytics": 0.4,
+    "preprocessing": 0.1,
+    "caching": 0.05
+}
+
+TYPE_RAM = {
+    "data_aggregation": 0.15,
+    "edge_analytics": 0.3,
+    "preprocessing": 0.1,
+    "caching": 0.05
+}
+
+TYPE_STORAGE = {
+    "data_aggregation": 50.0,
+    "edge_analytics": 100.0,
+    "preprocessing": 25.0,
+    "caching": 10.0
+}
+
+TYPE_ENERGY = {
+    "data_aggregation": 0.1,
+    "edge_analytics": 0.2,
+    "preprocessing": 0.05,
+    "caching": 0.025
+}
+
+
+def calculate_score(task: Dict) -> float:
+    """
+    Calcule le score d'intelligence pour la tâche.
+    Plus le score est bas → plus la priorité est élevée.
+    """
+    priority = task.get("priority", 1)
+    criticality = task.get("criticality", 1)
+
+    task_type = task.get("type", "data_aggregation")
+    cpu = TYPE_CPU.get(task_type, 0.2)
+    ram = TYPE_RAM.get(task_type, 0.1)
+    storage = TYPE_STORAGE.get(task_type, 50.0)
+    energy = TYPE_ENERGY.get(task_type, 0.05)
+
+    # Calcul similaire au code Go
+    base_score = float(priority)
+    criticality_bonus = (5 - float(criticality)) * 10
+    resource_penalty = (cpu + ram) * 5
+    storage_penalty = storage * 0.001
+    energy_penalty = energy * 2
+
+    score = base_score + criticality_bonus + resource_penalty + storage_penalty + energy_penalty
+    return score
+
+
+def print_section(title: str):
+    print("\n" + "=" * 80)
+    print(f"  {title}")
+    print("=" * 80 + "\n")
+
+
+def submit_task(task_type: str, priority: int, criticality: int, cpu_cost: float = None) -> Dict:
+    task = {
+        "type": task_type,
+        "priority": priority,
+        "criticality": criticality,
+        "payload": {"test": "data"}
+    }
+
+    if cpu_cost is not None:
+        task["cpu_cost"] = cpu_cost
+        task["ram_cost"] = cpu_cost * 0.5
+
+    try:
+        response = requests.post(f"{BASE_URL}/tasks", json=task)
+        if response.status_code == 200:
+            data = response.json()
+            data["score"] = calculate_score(task)
+            return {"success": True, "data": data, "score": data["score"]}
+        else:
+            return {"success": False, "error": response.text}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+def get_metrics() -> Dict:
+    return requests.get(f"{BASE_URL}/metrics").json()
+
+
+def get_rejected_tasks() -> Dict:
+    return requests.get(f"{BASE_URL}/rejected-queue").json()
+
+
+def test_rejected_tasks_workflow():
+
+    print_section("TEST 1: Soumission de tâches normales")
+
+    for i in range(5):
+        result = submit_task("data_aggregation", priority=i + 1, criticality=2)
+
+        if result["success"]:
+            print(f"✓ Tâche {i+1} soumise : {result['data']['id']}")
+            print(f"  Type  : {result['data']['type']}")
+            print(f"  Priority : {result['data']['priority']}")
+            print(f"  Criticality : {result['data']['criticality']}")
+            print(f"  Score calculé : {result['score']:.2f}")
+        else:
+            print(f"✗ Tâche {i+1} rejetée : {result['error']}")
+
+        print()  # 👈 saut de ligne
+        time.sleep(0.2)
+
+    time.sleep(2)
+
+    print_section("TEST 2: Saturation pour provoquer des rejets")
+
+    accepted = 0
+    rejected = 0
+
+    for i in range(60):
+        result = submit_task("edge_analytics", priority=5, criticality=1)
+
+        if result["success"]:
+            accepted += 1
+            print(f"✓ Acceptée ({accepted}) - Score: {result['score']:.2f}")
+        else:
+            rejected += 1
+            print(f"❌ Rejetée ({rejected}) : {result['error']}")
+
+        print()  # 👈 saut de ligne
+
+    print(f"TOTAL → Acceptées: {accepted} | Rejetées: {rejected}\n")
+
+    print_section("TEST 3: Consultation de la queue des rejets")
+
+    rejected_tasks = get_rejected_tasks()
+    print(f"Nombre de tâches rejetées : {len(rejected_tasks)}\n")
+
+    for i, r in enumerate(rejected_tasks[:5], start=1):
+        print(f"Rejet #{i}")
+        print(f"  ID        : {r['task']['id']}")
+        print(f"  Type      : {r['task']['type']}")
+        print(f"  Priority  : {r['task']['priority']}")
+        print(f"  Criticality : {r['task']['criticality']}")
+        print(f"  Score calculé : {calculate_score(r['task']):.2f}")
+        print(f"  Raison    : {r['reason']}")
+        print(f"  Rejetée à : {r['rejected_at']}")
+        print(".\n")  # 👈 saut de ligne pour chaque tâche
+
+    print_section("TEST 4: Métriques du système")
+
+    metrics = get_metrics()
+    print(f"Tâches traitées   : {metrics['tasks_processed']}")
+    print(f"Charge actuelle   : {metrics['current_load']:.2f}")
+    print(f"Latence moyenne   : {metrics['avg_latency_ms']} ms")
+    print("\n")
+
+    print_section("FIN DES TESTS")
+    print("✓ Script terminé avec succès\n")
+
+
+def main():
+    print("\n" + "=" * 80)
+    print("  TEST FINAL – QUEUE DES TÂCHES REJETÉES AVEC SCORE")
+    print("=" * 80 + "\n")
+
+    try:
+        requests.get(f"{BASE_URL}/health", timeout=2)
+        print(f"✓ Serveur accessible sur {BASE_URL}\n")
+    except Exception:
+        print("❌ Serveur inaccessible. Lance le serveur Fog d'abord.")
+        return
+
+    test_rejected_tasks_workflow()
+
+
+if __name__ == "__main__":
+    main()
